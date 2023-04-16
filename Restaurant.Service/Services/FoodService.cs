@@ -24,7 +24,7 @@ namespace Restaurant.Service.Services
         {
             var updatingFood = await foodRepository.SelectAsync(u => u.Id.Equals(dto.Id));
             if (updatingFood is null)
-                throw new CustomException(404, "User not found");
+                throw new CustomException(404, "Food not found");
 
             this.mapper.Map(dto, updatingFood);
             updatingFood.UpdatedAt = DateTime.UtcNow;
@@ -36,27 +36,45 @@ namespace Restaurant.Service.Services
         {
             var food = await this.foodRepository.SelectAsync(u => u.Name.ToLower() == dto.Name.ToLower());
             if (food is not null)
-                throw new CustomException(403, "User already exsists with email");
+                throw new CustomException(403, "Food already exsists with email");
 
-            User mappedFood = mapper.Map<User>(dto);
-            var result = await this.userRepository.InsertAsync(mappedUser);
-            await this.userRepository.SaveChangesAsync();
-            return this.mapper.Map<UserForResultDto>(result);
+            Food mappedFood = mapper.Map<Food>(dto);
+            var result = await this.foodRepository.InsertAsync(mappedFood);
+            await this.foodRepository.SaveChangesAsync();
+            return this.mapper.Map<FoodForResultDto>(result);
         }
 
-        public Task<bool> RemoveAsync(long id)
+        public async Task<bool> RemoveAsync(long id)
         {
-            throw new NotImplementedException();
+            var food = await this.foodRepository.SelectAsync(u => u.Id.Equals(id));
+            if (food is null)
+                throw new CustomException(404, "Food not found");
+
+            await this.foodRepository.DeleteAsync(food);
+            await this.foodRepository.SaveChangesAsync();
+            return true;
         }
 
-        public Task<IEnumerable<FoodForResultDto>> RetriewAllAsync(Expression<Func<Food, bool>> expression = null, string search = null)
+        public async Task<IEnumerable<FoodForResultDto>> RetriewAllAsync(
+                Expression<Func<Food, bool>> expression = null, string search = null)
         {
-            throw new NotImplementedException();
+            var foods = foodRepository.SelectAll(expression, isTracking: false);
+
+            var result = mapper.Map<IEnumerable<FoodForResultDto>>(foods);
+            if (string.IsNullOrEmpty(search))
+            {
+                return result.Where(
+                    u => u.Name.ToLower().Contains(search.ToLower())).ToList();
+            }
+            return result;
         }
 
-        public Task<FoodForResultDto> RetriewByIdAsync(long id)
+        public async Task<FoodForResultDto> RetriewByIdAsync(long id)
         {
-            throw new NotImplementedException();
+            var food = await foodRepository.SelectAsync(u => u.Id.Equals(id));
+            if (food is null)
+                throw new CustomException(404, "Food not found");
+            return mapper.Map<FoodForResultDto>(food);
         }
     }
 }
