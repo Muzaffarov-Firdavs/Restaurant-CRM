@@ -20,21 +20,21 @@ namespace Restaurant.Service.Services
             this.mapper = mapper;
         }
 
-        public async Task<FoodForResultDto> ChangeAsync(FoodForCreationDto dto)
+        public async Task<FoodForResultDto> ChangeAsync(FoodForUpdateDto dto)
         {
-            var updatingUser = await foodRepository.SelectAsync(u => u.Id.Equals(dto.Id));
-            if (updatingUser is null)
+            var updatingFood = await foodRepository.SelectAsync(u => u.Id.Equals(dto.Id));
+            if (updatingFood is null)
                 throw new CustomException(404, "User not found");
 
-            this.mapper.Map(dto, updatingUser);
-            updatingUser.UpdatedAt = DateTime.UtcNow;
-            await this.userRepository.SaveChangesAsync();
-            return mapper.Map<UserForResultDto>(updatingUser);
+            this.mapper.Map(dto, updatingFood);
+            updatingFood.UpdatedAt = DateTime.UtcNow;
+            await this.foodRepository.SaveChangesAsync();
+            return mapper.Map<FoodForResultDto>(updatingFood);
         }
 
         public Task<FoodForResultDto> CreateAsync(FoodForCreationDto dto)
         {
-            throw new NotImplementedException();
+
         }
 
         public Task<bool> RemoveAsync(long id)
