@@ -2,7 +2,6 @@
 using Restaurant.Data.IRepositories;
 using Restaurant.Domain.Entities;
 using Restaurant.Service.DTOs.Foods;
-using Restaurant.Service.DTOs.Users;
 using Restaurant.Service.Exceptions;
 using Restaurant.Service.Interfaces;
 using System.Linq.Expressions;
