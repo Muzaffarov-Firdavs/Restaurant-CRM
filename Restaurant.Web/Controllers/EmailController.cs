@@ -11,7 +11,6 @@ namespace Restaurant.Web.Controllers
     public class EmailController : ControllerBase
     {
         private readonly EmailVerification emailVerification;
-
         public EmailController(EmailVerification emailVerification)
         {
             this.emailVerification = emailVerification;

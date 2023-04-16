@@ -26,6 +26,10 @@ namespace Restaurant.Service.Services
             if (updatingUser is null)
                 throw new CustomException(404, "User not found");
 
+            var hash = PasswordHasher.Hash(dto.Password);
+            if (PasswordHasher.Verify(dto.Password, hash.passwordHash, hash.salt))
+                throw new Exception("Existing Password is incorrect");
+
             this.mapper.Map(dto, updatingUser);
             updatingUser.UpdatedAt = DateTime.UtcNow;
             await this.userRepository.SaveChangesAsync();
@@ -37,6 +41,10 @@ namespace Restaurant.Service.Services
             User existUser = await userRepository.SelectAsync(u => u.Email == dto.Email);
             if (existUser is null)
                 throw new Exception("This username is not exist");
+
+            var hash = PasswordHasher.Hash(dto.OldPassword);
+            if (PasswordHasher.Verify(dto.NewPassword, hash.passwordHash, existUser.Salt))
+                throw new Exception("Existing Password is incorrect");
             else if (dto.NewPassword != dto.ComfirmPassword)
                 throw new Exception("New password and confirm password are not equal");
             else if (existUser.Password != dto.OldPassword)
@@ -53,7 +61,11 @@ namespace Restaurant.Service.Services
             if (user is not null)
                 throw new CustomException(403, "User already exsists with email");
 
+            var hash = PasswordHasher.Hash(dto.Password);
+            dto.Password = hash.passwordHash;
+
             User mappedUser = mapper.Map<User>(dto);
+            mappedUser.Salt = hash.salt;
             var result = await this.userRepository.InsertAsync(mappedUser);
             await this.userRepository.SaveChangesAsync();
             return this.mapper.Map<UserForResultDto>(result);
