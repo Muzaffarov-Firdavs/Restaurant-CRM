@@ -13,13 +13,11 @@ namespace Restaurant.Service.Services
     {
         private readonly IRepository<User> userRepository;
         private readonly IMapper mapper;
-        private readonly PasswordHasher passwordHasher;
 
-        public UserService(IRepository<User> userRepository, IMapper mapper, PasswordHasher passwordHasher)
+        public UserService(IRepository<User> userRepository, IMapper mapper)
         {
             this.userRepository = userRepository;
             this.mapper = mapper;
-            this.passwordHasher = passwordHasher;
         }
 
         public async Task<UserForResultDto> ChangeAsync(UserForUpdateDto dto)
