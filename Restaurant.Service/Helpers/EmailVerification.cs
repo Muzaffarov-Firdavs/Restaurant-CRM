@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using MimeKit;
 using MimeKit.Text;
 using Restaurant.Service.DTOs.Users;
+using Restaurant.Service.Exceptions;
 using StackExchange.Redis;
 
 namespace Restaurant.Service.Helpers
@@ -43,10 +44,9 @@ namespace Restaurant.Service.Helpers
 
                 return result.ToString();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                throw new CustomException(400, ex.Message);
             }
         }
     }
