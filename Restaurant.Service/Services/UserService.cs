@@ -3,6 +3,7 @@ using Restaurant.Data.IRepositories;
 using Restaurant.Domain.Entities;
 using Restaurant.Service.DTOs.Users;
 using Restaurant.Service.Exceptions;
+using Restaurant.Service.Helpers;
 using Restaurant.Service.Interfaces;
 using System.Linq.Expressions;
 
@@ -12,11 +13,13 @@ namespace Restaurant.Service.Services
     {
         private readonly IRepository<User> userRepository;
         private readonly IMapper mapper;
+        private readonly PasswordHasher passwordHasher;
 
-        public UserService(IRepository<User> userRepository, IMapper mapper)
+        public UserService(IRepository<User> userRepository, IMapper mapper, PasswordHasher passwordHasher)
         {
             this.userRepository = userRepository;
             this.mapper = mapper;
+            this.passwordHasher = passwordHasher;
         }
 
         public async Task<UserForResultDto> ChangeAsync(UserForUpdateDto dto)

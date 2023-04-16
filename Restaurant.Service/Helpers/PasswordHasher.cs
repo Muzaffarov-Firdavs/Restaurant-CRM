@@ -2,7 +2,7 @@
 {
     public class PasswordHasher
     {
-        public static (string passwordHash, string salt) Hash(string password)
+        public  (string passwordHash, string salt) Hash(string password)
         {
             string salt = Guid.NewGuid().ToString();
             string strongPassword = salt + password;
