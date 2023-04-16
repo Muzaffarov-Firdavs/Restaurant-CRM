@@ -7,7 +7,6 @@ namespace Restaurant.Web.Controllers
     public class FoodsController : BaseController
     {
         private readonly IFoodService foodService;
-
         public FoodsController(IFoodService foodService)
         {
             this.foodService = foodService;

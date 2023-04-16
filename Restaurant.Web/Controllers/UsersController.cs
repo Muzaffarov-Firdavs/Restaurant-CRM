@@ -7,7 +7,6 @@ namespace Restaurant.Web.Controllers
     public class UsersController : BaseController
     {
         private readonly IUserService userService;
-
         public UsersController(IUserService userService)
         {
             this.userService = userService;
