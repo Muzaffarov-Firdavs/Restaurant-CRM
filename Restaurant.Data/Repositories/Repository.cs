@@ -1,39 +1,53 @@
-﻿using Restaurant.Data.IRepositories;
-using Restaurant.Domain.Commons;
+﻿using Microsoft.EntityFrameworkCore;
+using Restaurant.Data.Contexts;
+using Restaurant.Data.IRepositories;
 using System.Linq.Expressions;
 
 namespace Restaurant.Data.Repositories
 {
     public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
-        public ValueTask<bool> DeleteAsync(TEntity entity)
+        protected readonly AppDbContext dbContext;
+        protected readonly DbSet<TEntity> dbSet;
+
+        public Repository(AppDbContext dbContext)
         {
-            throw new NotImplementedException();
+            this.dbContext = dbContext;
+            this.dbSet = dbContext.Set<TEntity>();
         }
 
-        public ValueTask<TEntity> InsertAsync(TEntity entity)
+
+        public async ValueTask<bool> DeleteAsync(TEntity entity)
         {
-            throw new NotImplementedException();
+            this.dbSet.Remove(entity);
+            return true;
         }
 
-        public ValueTask SaveChangesAsync()
+        public async ValueTask<TEntity> InsertAsync(TEntity entity)
+            => (await this.dbSet.AddAsync(entity)).Entity;
+
+        public async ValueTask<TEntity> UpdateAsync(TEntity entity)
+           => this.dbContext.Update(entity).Entity;
+
+        public IQueryable<TEntity> SelectAll(
+                Expression<Func<TEntity, bool>> expression = null, string[] includes = null, bool isTracking = true)
         {
-            throw new NotImplementedException();
+            IQueryable<TEntity> query = expression is null ? dbSet : dbSet.Where(expression);
+
+            if (includes is null)
+                foreach (var include in includes)
+                    query = query.Include(include);
+
+            if (!isTracking)
+                query = query.AsNoTracking();
+
+            return query;
         }
 
-        public IQueryable<TEntity> SelectAll(Expression<Func<TEntity, bool>> expression = null, string[] includes = null, bool isTracking = true)
-        {
-            throw new NotImplementedException();
-        }
+        public async ValueTask<TEntity> SelectAsync(Expression<Func<TEntity, bool>> expression, string[] includes = null)
+            => await this.SelectAll(expression, includes).FirstOrDefaultAsync();
 
-        public ValueTask<TEntity> SelectAsync(Expression<Func<TEntity, bool>> expression, string[] includes = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ValueTask<TEntity> UpdateAsync(TEntity entity)
-        {
-            throw new NotImplementedException();
-        }
+        public async ValueTask SaveChangesAsync()
+            => await this.dbContext.SaveChangesAsync();
     }
 }
