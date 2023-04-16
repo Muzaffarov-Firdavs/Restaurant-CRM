@@ -1,6 +1,6 @@
 ﻿namespace Restaurant.Service.Services
 {
-    internal class SoldFoodService
+    public class SoldFoodService
     {
     }
 }
