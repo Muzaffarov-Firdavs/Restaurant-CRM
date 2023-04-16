@@ -32,9 +32,16 @@ namespace Restaurant.Service.Services
             return mapper.Map<FoodForResultDto>(updatingFood);
         }
 
-        public Task<FoodForResultDto> CreateAsync(FoodForCreationDto dto)
+        public async Task<FoodForResultDto> CreateAsync(FoodForCreationDto dto)
         {
+            var food = await this.foodRepository.SelectAsync(u => u.Name.ToLower() == dto.Name.ToLower());
+            if (food is not null)
+                throw new CustomException(403, "User already exsists with email");
 
+            User mappedFood = mapper.Map<User>(dto);
+            var result = await this.userRepository.InsertAsync(mappedUser);
+            await this.userRepository.SaveChangesAsync();
+            return this.mapper.Map<UserForResultDto>(result);
         }
 
         public Task<bool> RemoveAsync(long id)
