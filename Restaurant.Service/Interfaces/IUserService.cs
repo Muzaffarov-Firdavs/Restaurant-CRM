@@ -13,6 +13,5 @@ namespace Restaurant.Service.Interfaces
         Task<IEnumerable<UserForResultDto>> RetriewAllAsync(
             Expression<Func<User, bool>> expression = null, string search = null);
         Task<bool> RemoveAsync(long id);
-
     }
 }
