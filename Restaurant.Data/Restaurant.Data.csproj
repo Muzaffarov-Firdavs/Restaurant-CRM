@@ -15,8 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-    <Folder Include="Repositories\" />
-    <Folder Include="IRepositories\" />
-  </ItemGroup>
+	  <ProjectReference Include="..\Restaurant.Domain\Restaurant.Domain.csproj" />
+	</ItemGroup>
 
 </Project>
